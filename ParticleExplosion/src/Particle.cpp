@@ -1,5 +1,6 @@
 #include "Particle.h"
 #include <random>
+#include <math.h>
 
 
 Particle::Particle()
@@ -13,9 +14,9 @@ Particle::Particle()
 	m_x = 0.0f;
 	m_y = 0.0f;
 
-	m_xSpeed = (float)0.01f*(rand() * 2.0f / RAND_MAX - 1.0f);
-	m_ySpeed = (float)0.01f*(rand() * 2.0f / RAND_MAX - 1.0f);
-
+	m_rSpeed = (float)(0.0001f*rand()) / RAND_MAX;
+	m_angle = (float)(2.0f*PI*rand()) / RAND_MAX;
+	m_angleSpeed = 0.001f;
 }
 
 Particle::Particle(Uint8 r, Uint8 g, Uint8 b)
@@ -29,16 +30,11 @@ Particle::Particle(float x, float y, Uint8 r, Uint8 g, Uint8 b)
 	: m_x(x), m_y(y), m_r(r), m_g(g), m_b(b)
 {}
 
-void Particle::move()
+void Particle::move(int interval)
 {
-	//bouncing
-	if (m_x<-1.0 || m_x>1.0)
-		m_xSpeed = -m_xSpeed;
-	if (m_y<-1.0 || m_y>1.0)
-		m_ySpeed = -m_ySpeed;
-
-	m_x += m_xSpeed;
-	m_y += m_ySpeed;
+	float r = sqrt(m_x*m_x + m_y*m_y);
+	m_x += (m_rSpeed*cos(m_angle) - r*sin(m_angle)*m_angleSpeed) * interval;
+	m_y += (m_rSpeed*sin(m_angle) + r*cos(m_angle)*m_angleSpeed) * interval;
 }
 /////
 

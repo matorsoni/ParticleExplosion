@@ -94,7 +94,7 @@ void Screen::setPixel(int x, int y, Uint8 red, Uint8 green, Uint8 blue)
 void Screen::setPixel(Particle part)
 {
 	int x = (int)((part.m_x + 1)*WIDTH / 2);
-	int y = (int)(HEIGHT - (part.m_y + 1)*HEIGHT / 2);
+	int y = (int)((HEIGHT - (part.m_y + 1)*HEIGHT / 2));
 	Uint8 red = part.getRed();
 	Uint8 green = part.getGreen();
 	Uint8 blue = part.getBlue();
@@ -105,7 +105,7 @@ void Screen::setPixel(Particle part)
 void Screen::setPixel(Particle part, Uint8 red, Uint8 green, Uint8 blue)
 {
 	int x = (int)((part.m_x + 1.0f)*WIDTH / 2);
-	int y = (int)(HEIGHT - (part.m_y + 1.0f)*HEIGHT / 2);
+	int y = (int)(HEIGHT - (part.m_y/HEIGHT*WIDTH + 1.0f)*HEIGHT / 2); //scales y to the same scale as x
 
 	setPixel(x, y, red, green, blue);
 }

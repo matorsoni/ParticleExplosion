@@ -31,6 +31,8 @@ int main(int argc, char **argv)
 	const float GREEN_FREQ = 0.002f;
 	const float BLUE_FREQ = 0.003f;
 
+	int last_time = 0;
+
 	//game loop
 	while (!quit)
 	{
@@ -43,10 +45,12 @@ int main(int argc, char **argv)
 		//show particles with varying rgb and position
 		for (int i = 0; i <swarm.NB_PARTICLES; i++)
 		{
-			ptr[i].move();
+			ptr[i].move(time_elapsed - last_time);
+			
 			screen.setPixel(ptr[i], red, green, blue);
 		}
 
+		last_time = time_elapsed;
 		screen.update();
 		
 		while (SDL_PollEvent(&event))
