@@ -18,7 +18,7 @@ int main(int argc, char **argv)
 	bool quit = false;
 	SDL_Event event;
 
-	Swarm swarm(10);
+	Swarm swarm(1000);
 	Particle *ptr = swarm.getParticles();
 
 	//oscillating colors
