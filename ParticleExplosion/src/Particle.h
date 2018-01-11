@@ -31,8 +31,10 @@ public:
 	Uint8 getRed() { return m_r; }
 	Uint8 getGreen() { return m_g; }
 	Uint8 getBlue() { return m_b; }
-
+	
+	void updateRSpeed(int time_elapsed);
 	//using interval between loops to insure constante frame rates
+	void move();
 	void move(int interval);
 
 

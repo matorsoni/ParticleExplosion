@@ -13,6 +13,7 @@ Screen::Screen(const int w, const int h)
 Screen::~Screen()
 {
 	delete[] m_buffer;
+	delete[] m_bufferBlur;
 	SDL_DestroyTexture(m_texture);
 	SDL_DestroyRenderer(m_renderer);
 	SDL_DestroyWindow(m_window);
@@ -56,9 +57,11 @@ bool Screen::init()
 	}
 
 	m_buffer = new Uint32[WIDTH*HEIGHT];
+	m_bufferBlur = new Uint32[WIDTH*HEIGHT];
 
 	//black screen
 	memset(m_buffer, 0x00000000, WIDTH*HEIGHT*sizeof(Uint32));
+	memset(m_bufferBlur, 0x00000000, WIDTH*HEIGHT * sizeof(Uint32));
 	
 
 	return true;
@@ -67,10 +70,10 @@ bool Screen::init()
 void Screen::update()
 {
 	//updates screen
-	SDL_UpdateTexture(m_texture, NULL, m_buffer, 800 * sizeof(Uint32));
-	SDL_RenderClear(m_renderer);
-	SDL_RenderCopy(m_renderer, m_texture, NULL, NULL);
-	SDL_RenderPresent(m_renderer);
+		SDL_UpdateTexture(m_texture, NULL, m_buffer, 800 * sizeof(Uint32));
+		SDL_RenderClear(m_renderer);
+		SDL_RenderCopy(m_renderer, m_texture, NULL, NULL);
+		SDL_RenderPresent(m_renderer);	
 }
 
 void Screen::setPixel(int x, int y, Uint8 red, Uint8 green, Uint8 blue)
@@ -93,8 +96,8 @@ void Screen::setPixel(int x, int y, Uint8 red, Uint8 green, Uint8 blue)
 
 void Screen::setPixel(Particle part)
 {
-	int x = (int)((part.m_x + 1)*WIDTH / 2);
-	int y = (int)((HEIGHT - (part.m_y + 1)*HEIGHT / 2));
+	int x = (int)((part.m_x + 1.0f)*WIDTH / 2);
+	int y = (int)(HEIGHT - (part.m_y / HEIGHT*WIDTH + 1.0f)*HEIGHT / 2); //scales y to the same scale as x
 	Uint8 red = part.getRed();
 	Uint8 green = part.getGreen();
 	Uint8 blue = part.getBlue();
@@ -110,10 +113,86 @@ void Screen::setPixel(Particle part, Uint8 red, Uint8 green, Uint8 blue)
 	setPixel(x, y, red, green, blue);
 }
 
-void Screen::clear()
+void Screen::clear(bool blur_on)
 {
-	memset(m_buffer, 0x00000000, WIDTH * HEIGHT * sizeof(Uint32));
+	if(!blur_on)
+		memset(m_buffer, 0x00000000, WIDTH * HEIGHT * sizeof(Uint32));
 }
 
+void Screen::boxBlur()
+{
+	//calculates the average of each color of one pixel and the 8 pixels surrounding it
+	Uint32 *aux = m_buffer;
+	m_buffer = m_bufferBlur;
+	m_bufferBlur = aux;
 
+	int posX;
+	int posY;
 
+	Uint8 red, blue, green;
+	Uint32 buffer_pixel, blur_pixel;
+	int pixel_counter;
+
+	//loop throug the whole m_buffer
+	for (int y = 0; y < HEIGHT; y++)
+		for (int x = 0; x < WIDTH; x++)
+		{
+			pixel_counter = 0;
+			red = 0;
+			green = 0;
+			blue = 0;
+
+			blur_pixel = 0x00000000;
+
+			//loop through the 9 pixel grid for each pixel from m_buffer
+			for (int i = -1; i < 2; i++)
+				for (int j = -1; j < 2; j++)
+				{
+					posX = x + j;
+					posY = y + i;
+					
+
+					if (posX >= 0 && posX < WIDTH && posY >= 0 && posY < HEIGHT)
+					{
+						buffer_pixel = m_bufferBlur[posY*WIDTH + posX];
+						
+						red += getRed(buffer_pixel);
+						green += getGreen(buffer_pixel);
+						blue += getBlue(buffer_pixel);
+
+						pixel_counter++;
+					}
+
+				}
+
+			if (pixel_counter == 0)
+				return;
+
+			red = red / pixel_counter;
+			green = green / pixel_counter;
+			blue = blue / pixel_counter;
+
+			setPixel(x, y, red, green, blue);
+		}
+
+	
+	
+}
+
+Uint8 Screen::getRed(Uint32 pixel)
+{
+	Uint8 red = pixel>>24;
+	return red;
+}
+
+Uint8 Screen::getGreen(Uint32 pixel)
+{
+	Uint8 green = pixel >> 16;
+	return green;
+}
+
+Uint8 Screen::getBlue(Uint32 pixel)
+{
+	Uint8 blue = pixel >> 8;
+	return blue;
+}

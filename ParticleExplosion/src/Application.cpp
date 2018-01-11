@@ -18,7 +18,8 @@ int main(int argc, char **argv)
 	bool quit = false;
 	SDL_Event event;
 
-	Swarm swarm(1000);
+	//number of particles
+	Swarm swarm(500);
 	Particle *ptr = swarm.getParticles();
 
 	//oscillating colors
@@ -27,17 +28,20 @@ int main(int argc, char **argv)
 	unsigned char blue;
 
 	//color oscillation frequency 
-	const float RED_FREQ = 0.001f;
-	const float GREEN_FREQ = 0.002f;
+	const float RED_FREQ = 0.002f;
+	const float GREEN_FREQ = 0.001f;
 	const float BLUE_FREQ = 0.003f;
 
 	int last_time = 0;
 
+	bool blur_on = false;
+
 	//game loop
 	while (!quit)
 	{
-		//varying colors
 		int time_elapsed = SDL_GetTicks();
+
+		//varying colors
 		red = (unsigned char)((1 + sin(time_elapsed * RED_FREQ)) * 127);
 		green = (unsigned char)((1 + sin(time_elapsed * GREEN_FREQ)) * 127);
 		blue = (unsigned char)((1 + sin(time_elapsed * BLUE_FREQ)) * 127);
@@ -45,12 +49,17 @@ int main(int argc, char **argv)
 		//show particles with varying rgb and position
 		for (int i = 0; i <swarm.NB_PARTICLES; i++)
 		{
-			ptr[i].move(time_elapsed - last_time);
-			
+		//	ptr[i].updateRSpeed(time_elapsed);
+		//	ptr[i].move(time_elapsed - last_time);
+			ptr[i].move();
 			screen.setPixel(ptr[i], red, green, blue);
 		}
 
 		last_time = time_elapsed;
+
+		if(blur_on)
+			screen.boxBlur();
+
 		screen.update();
 		
 		while (SDL_PollEvent(&event))
@@ -62,7 +71,7 @@ int main(int argc, char **argv)
 			}
 		}
 
-		screen.clear();
+		screen.clear(blur_on);
 	}
 			
 	return 0;
