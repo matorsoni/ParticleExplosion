@@ -166,11 +166,23 @@ void Screen::boxBlur()
 				}
 
 			if (pixel_counter == 0)
-				return;
+				continue;
 
-			red = red / pixel_counter;
-			green = green / pixel_counter;
-			blue = blue / pixel_counter;
+			Uint8 aux = (red > blue) ? red : blue;
+			Uint8 max_color = (aux > green) ? aux : green;
+
+			if (max_color == 0)
+				continue;
+
+		//  deixar as cores mais claras e bonitas
+
+		//	red = red * 255 /(max_color * pixel_counter);
+		//	green = green * 255 / (max_color * pixel_counter);
+		//	blue = blue * 255 / (max_color * pixel_counter);
+
+			red /= 9;
+			green /= 9;
+			blue /= 9;
 
 			setPixel(x, y, red, green, blue);
 		}

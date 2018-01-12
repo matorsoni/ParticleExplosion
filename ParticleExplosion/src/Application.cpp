@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 
 	int last_time = 0;
 
-	bool blur_on = false;
+	bool blur_on = true;
 
 	//game loop
 	while (!quit)
@@ -42,9 +42,9 @@ int main(int argc, char **argv)
 		int time_elapsed = SDL_GetTicks();
 
 		//varying colors
-		red = (unsigned char)((1 + sin(time_elapsed * RED_FREQ)) * 127);
-		green = (unsigned char)((1 + sin(time_elapsed * GREEN_FREQ)) * 127);
-		blue = (unsigned char)((1 + sin(time_elapsed * BLUE_FREQ)) * 127);
+		red = (unsigned char)((1 + sin(time_elapsed * RED_FREQ)) * 128);
+		green = (unsigned char)((1 + sin(time_elapsed * GREEN_FREQ)) * 128);
+		blue = (unsigned char)((1 + sin(time_elapsed * BLUE_FREQ)) * 128);
 
 		//show particles with varying rgb and position
 		for (int i = 0; i <swarm.NB_PARTICLES; i++)
