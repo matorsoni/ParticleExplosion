@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 	SDL_Event event;
 
 	//number of particles
-	Swarm swarm(500);
+	Swarm swarm(5000);
 	Particle *ptr = swarm.getParticles();
 
 	//oscillating colors
@@ -28,9 +28,9 @@ int main(int argc, char **argv)
 	unsigned char blue;
 
 	//color oscillation frequency 
-	const float RED_FREQ = 0.002f;
-	const float GREEN_FREQ = 0.001f;
-	const float BLUE_FREQ = 0.003f;
+	const float RED_FREQ = 0.001f;
+	const float GREEN_FREQ = 0.0005f;
+	const float BLUE_FREQ = 0.0015f;
 
 	int last_time = 0;
 
@@ -49,9 +49,7 @@ int main(int argc, char **argv)
 		//show particles with varying rgb and position
 		for (int i = 0; i <swarm.NB_PARTICLES; i++)
 		{
-		//	ptr[i].updateRSpeed(time_elapsed);
-		//	ptr[i].move(time_elapsed - last_time);
-			ptr[i].move();
+			ptr[i].move(time_elapsed - last_time);
 			screen.setPixel(ptr[i], red, green, blue);
 		}
 

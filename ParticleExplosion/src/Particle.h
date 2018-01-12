@@ -14,7 +14,7 @@ private:
 	Uint8 m_g;
 	Uint8 m_b;
 
-	
+	void init();
 	
 
 public:
@@ -25,14 +25,11 @@ public:
 	float m_y;
 
 	Particle();
-	Particle(Uint8 r, Uint8 g, Uint8 b);
-	Particle(float x, float y, Uint8 r, Uint8 g, Uint8 b);
 
 	Uint8 getRed() { return m_r; }
 	Uint8 getGreen() { return m_g; }
 	Uint8 getBlue() { return m_b; }
 	
-	void updateRSpeed(int time_elapsed);
 	//using interval between loops to insure constante frame rates
 	void move();
 	void move(int interval);
